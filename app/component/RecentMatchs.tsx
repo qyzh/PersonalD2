@@ -109,7 +109,7 @@ export default function Recent_match() {
                                     {heroInfo && <img src={`https://cdn.cloudflare.steamstatic.com/${heroInfo?.img}`} alt={heroInfo.name} className='w-full h-full object-cover rounded-md' />}
                                 </div>
                             <div className="flex flex-col content-center mt-2">
-                                 <div className="font-semibold text-2xl"> {heroInfo?.name}</div>
+                                 <div className="font-semibold text-2xl lg:text-lg xl:text-2xl"> {heroInfo?.name}</div>
                                  <div className='flex flex-row gap-2'>
                                 <div className='inline-flex items-center'><Sword className='size-4'/>:{match.kills} </div>
                                 <div className='inline-flex items-center'><Skull className='size-4'/>:{match.deaths}</div>
