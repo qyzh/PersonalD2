@@ -32,11 +32,9 @@ export default function Home() {
 <SHeader header="Dashboard" desc="Welcome to your dashboard" />
         <div className="grid lg:grid-cols-3 lg:grid-rows-1 gap-2">
             <div>
-            <Card>
                     <Suspense fallback={<FBWinrate />}>
                         <Winrate />
                     </Suspense>
-            </Card>
             </div>
             <div>
             <Card>
