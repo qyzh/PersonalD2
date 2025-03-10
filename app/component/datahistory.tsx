@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/app/component/ui/Table"
-
+import { Trophy, ShieldBan } from 'lucide-react';
 interface Match {
     match_id: number;
     kills: number;
@@ -109,6 +109,7 @@ export default function DataHistory() {
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px]">Hero</TableHead>
+                        <TableHead>Result</TableHead>
                         <TableHead>K</TableHead>
                         <TableHead>D</TableHead>
                         <TableHead>A</TableHead>
@@ -142,6 +143,13 @@ export default function DataHistory() {
                                             <div className="text-sm text-zinc-400">{formatDate(match.start_time)}</div>
                                         </div>
                                     </div>
+                                </TableCell>
+                                <TableCell>{
+                                    didWin ?
+                                    <Trophy className="" />
+                                    :
+                                     <ShieldBan className="" />
+                                    }
                                 </TableCell>
                                 <TableCell>{match.kills}</TableCell>
                                 <TableCell>{match.deaths}</TableCell>
