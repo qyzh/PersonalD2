@@ -6,15 +6,6 @@ import SHeader from "../component/sheader";
  import FBdatamatch from "../suspend/FBdatamatch";
 import Footer from "../component/footer";
 // import { DataChart } from "../data/DrankChart";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/app/component/ui/Table"
 import DataHistory from "../component/datahistory";
 
 
