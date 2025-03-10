@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Sword, Skull, Handshake } from 'lucide-react';
 import dataitem from '../data/item/item_ID.json';
 import itemDetails from '../data/item/itemDetail.json';
 
@@ -94,7 +95,7 @@ export default function Recent_match() {
     }, []);
 
     return (
-        <div className="font-mono">
+        <div className="">
             <div className="mt-4">
                 {matches.slice(0, 1).map((match) => {
                     const isRadiant = match.player_slot < 127;
@@ -102,25 +103,25 @@ export default function Recent_match() {
                     const BgColor = didWin ? 'border-emerald-500 bg-emerald-100 px-2.5 py-0.5 text-emerald-700' : 'bg-red-100 border-red-500 px-2.5 py-0.5 text-red-700';
                     const heroInfo = heroNameMap.get(match.hero_id);
                     return (
-                        <div key={match.match_id} className="flex flex-col md:flex-row ">
-                            <div className="">
+                        <div key={match.match_id} className="">
+                            <div className="flex flex-col md:flex-row gap-2">
                                 <div className="h-32 md:h-28 overflow-hidden object-fill ">
                                     {heroInfo && <img src={`https://cdn.cloudflare.steamstatic.com/${heroInfo?.img}`} alt={heroInfo.name} className='w-full h-full object-cover rounded-md' />}
                                 </div>
-                            </div>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col content-center mt-2">
                                  <div className="font-semibold text-2xl"> {heroInfo?.name}</div>
-                                 <div className='flex flex-row md:flex-col gap-2 sm:gap-2'>
-                                <p>Kill:{match.kills}  </p>
-                                <p>Death:{match.deaths}</p>
-                                <p>Assist:{match.assists}</p>
+                                 <div className='flex flex-row gap-2'>
+                                <div className='inline-flex items-center'><Sword className='size-4'/>:{match.kills} </div>
+                                <div className='inline-flex items-center'><Skull className='size-4'/>:{match.deaths}</div>
+                                <div className='inline-flex items-center'><Handshake className='size-4'/>:{match.assists}</div>
                                 </div>
                                 <p className={`inline items-center justify-center rounded border px-2.5 py-0.5 ${BgColor}`}>
                                     {didWin ? 'Win' : 'Lose'}
                                 </p>
                             </div>
-                            {/* <div className='mt-2  '>
-                                <div className='grid grid-cols-6 md:grid-cols-1 gap-1'>
+                            </div>
+                            <div className='mt-2'>
+                                <div className='grid grid-cols-6 gap-1'>
                                     {[match.item_0, match.item_1, match.item_2, match.item_3, match.item_4, match.item_5].map((itemId, index) => {
                                         const itemInfo = itemNameMap.get(itemId);
                                         return (
@@ -130,16 +131,17 @@ export default function Recent_match() {
                                                 text-card-foreground
                                                 shadow
                                                 p-2
-                                                invisible">
-                                                {itemInfo && <img src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} alt={itemInfo.name} className='size-10 rounded-xl object-fill' />}
+                                                ">
+                                                {itemInfo && <img src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} alt={itemInfo.name} className='size-12 rounded-xl object-fill' />}
                                             </div>
                                         );
                                     })}
                                 </div>
-                            </div> */}
+                            </div>
                         </div>
                     );
                 })}
+
             </div>
         </div>
     );
