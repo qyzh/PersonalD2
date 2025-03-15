@@ -10,7 +10,6 @@ import {
     TableRow,
   } from "@/app/component/ui/Table"
 import { Trophy, ShieldBan } from 'lucide-react';
-import { getProfileID } from "@/app/profile/profiledata";
 import { getHistoryMatchs } from "@/app/data/game/historymatch";
 interface Match {
     match_id: number;
