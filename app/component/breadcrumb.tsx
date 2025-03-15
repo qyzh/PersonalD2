@@ -1,6 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
-const userID ='152850421'; // Hardcoded user ID
+import { getProfileID } from "../profile/profiledata";
+
+ const userID = await getProfileID();
 export default function Breadcrumb() {
     const title = usePathname().slice(1) || "page"; // Automatically get the page title from the URL
     return (

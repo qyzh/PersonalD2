@@ -14,8 +14,9 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "../component/ui/Chart"
+import { getProfileID } from "../profile/profiledata";
 
-const userID = '152850421';
+const userID = await getProfileID();
 type WinLossStats = {
     win: number;
     lose: number;

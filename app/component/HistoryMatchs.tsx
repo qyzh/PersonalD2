@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-
+import { getProfileID } from "@/app/profile/profiledata";
 interface Match {
     match_id: number;
     kills: number;
@@ -20,6 +20,7 @@ type HeroName = {
     img: string;
     roles: string[];
 }[];
+const userID = await getProfileID();
 export default function HistoryMatch() {
     const [matches, setMatches] = useState<Match[]>([]);
     const [heroNameMap, setHeroNameMap] = useState<Map<number, { name: string; img: string }>>(new Map());
@@ -27,7 +28,7 @@ export default function HistoryMatch() {
     useEffect(() => {
         async function fetchMatches() {
             try {
-                const metaMatchUrl = 'https://api.opendota.com/api/players/152850421/matches?significant=0&project=duration&project=game_mode&project=lobby_type&project=start_time&project=hero_id&project=version&project=kills&project=deaths&project=assists&project=leaver_status';
+                const metaMatchUrl = `https://api.opendota.com/api/players/${userID}/matches?significant=0&project=duration&project=game_mode&project=lobby_type&project=start_time&project=hero_id&project=version&project=kills&project=deaths&project=assists&project=leaver_status`;
                 if (!metaMatchUrl) {
                     throw new Error('API is not defined');
                 }

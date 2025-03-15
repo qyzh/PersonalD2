@@ -19,7 +19,9 @@ import FBrecentgame from './suspend/FBrecentgame';
 import FBhistorygame from './suspend/FBhistory';
 import FBbesthero from './suspend/FBbesthero';
 import Footer from './component/footer';
+import { getProfileUserName } from './profile/profiledata';
 
+const userName = await getProfileUserName();
 export default function Home() {
   return (
     <div className="flex h-screen ">
@@ -29,7 +31,7 @@ export default function Home() {
       <main className="flex flex-1 flex-col">
       <Breadcrumb />
       <div className='mx-auto container px-6 py-6'>
-<SHeader header="Dashboard" desc="Welcome to your dashboard" />
+<SHeader header={`Hi, ${userName}`}  desc="Welcome to your dashboard" />
         <div className="grid lg:grid-cols-3 lg:grid-rows-1 gap-2">
             <div>
                     <Suspense fallback={<FBWinrate />}>

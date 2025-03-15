@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sword, Skull, Handshake } from 'lucide-react';
 import dataitem from '../data/item/item_ID.json';
 import itemDetails from '../data/item/itemDetail.json';
-
+import { getProfileID } from '../profile/profiledata';
 type Match = {
     match_id: number;
     kills: number;
@@ -33,7 +33,7 @@ type Item = {
     name: string;
     img: string;
 }[];
-
+const userID = await getProfileID();
 const matches_full = 'https://api.opendota.com/api/players/152850421/matches?significant=0&project=duration&project=game_mode&project=lobby_type&project=start_time&project=hero_id&project=version&project=kills&project=deaths&project=assists&project=leaver_status&project=party_size&project=average_rank&project=hero_variant&project=item_0&project=item_1&project=item_2&project=item_3&project=item_4&project=item_5';
 
 export default function Recent_match() {

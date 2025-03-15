@@ -10,6 +10,8 @@ import {
     TableRow,
   } from "@/app/component/ui/Table"
 import { Trophy, ShieldBan } from 'lucide-react';
+import { getProfileID } from "@/app/profile/profiledata";
+
 interface Match {
     match_id: number;
     kills: number;
@@ -35,8 +37,8 @@ type HeroName = {
     img: string;
     roles: string[];
 }[];
-
-const fullhistoryurl = 'https://api.opendota.com/api/players/152850421/matches?significant=0&project=duration&project=game_mode&project=lobby_type&project=start_time&project=hero_id&project=version&project=kills&project=deaths&project=assists&project=leaver_status&project=party_size&project=average_rank&project=hero_variant&project=item_0&project=item_1&project=item_2&project=item_3&project=item_4&project=item_5';
+const userID = await getProfileID();
+const fullhistoryurl = `https://api.opendota.com/api/players/${userID}/matches?significant=0&project=duration&project=game_mode&project=lobby_type&project=start_time&project=hero_id&project=version&project=kills&project=deaths&project=assists&project=leaver_status&project=party_size&project=average_rank&project=hero_variant&project=item_0&project=item_1&project=item_2&project=item_3&project=item_4&project=item_5`;
 const heroStatsUrl = 'https://dummyjson.com/c/be13-4e90-42b4-90b1';
 const gameModeUrl = `https://dummyjson.com/c/3034-176f-4966-b99e`;
 
