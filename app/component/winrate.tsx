@@ -7,6 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+    CardFooter,
 } from "../component/ui/Card"
 import {
     ChartConfig,
@@ -14,22 +15,21 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "../component/ui/Chart"
-import { getProfileID } from "../profile/profiledata";
+import { getWinrate } from '../data/game/winrate';
 
-const userID = await getProfileID();
-type WinLossStats = {
+  type Stats = {
     win: number;
     lose: number;
   };
-const winlose = `https://api.opendota.com/api/players/${userID}`; // 'https://api.opendota.com/api/players/152850421/wl'
+
   export default function WinRate() {
-    const [stats, setStats] = useState<WinLossStats | null>(null);
+    const [stats, setStats] = useState<Stats | null>(null);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const data = await fetch(`${winlose}/wl?`);
-                const stats: WinLossStats = await data.json();
+                const data = await getWinrate();
+                const stats = await data;
                 setStats(stats);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -41,7 +41,7 @@ const winlose = `https://api.opendota.com/api/players/${userID}`; // 'https://ap
       const totalMatches = stats ? stats.win + stats.lose : 0;
       const percentage = stats ? ((stats.win / totalMatches) * 100).toPrecision(3) : '0.00';
 
-      const chartData = [{ month: "january",
+      const chartData = [{ total: totalMatches,
         win: stats?.win || 0,
         lose: stats?.lose || 0,
         }]
@@ -121,6 +121,11 @@ const winlose = `https://api.opendota.com/api/players/${userID}`; // 'https://ap
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col gap-2 text-sm">
+        <div className="flex items-center gap-2 font-medium leading-none">
+            You have been playing <span className='text-amber-400'>{totalMatches}</span> matches with a winrate of <span className='text-amber-400'>{percentage}%</span>
+        </div>
+      </CardFooter>
     </Card>
    </div>
       );
