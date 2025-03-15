@@ -122,7 +122,7 @@ import { getWinrate } from '../data/game/winrate';
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
+        <div className="items-center gap-2 font-medium leading-none">
             You have been playing <span className='text-amber-400'>{totalMatches}</span> matches with a winrate of <span className='text-amber-400'>{percentage}%</span>
         </div>
       </CardFooter>
