@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Sword, Skull, Handshake } from 'lucide-react';
 import dataitem from '../data/item/item_ID.json';
 import itemDetails from '../data/item/itemDetail.json';
-import { getProfileID } from '../profile/profiledata';
+import { getHistoryMatchs } from '../data/game/historymatch';
+
 type Match = {
     match_id: number;
     kills: number;
@@ -33,9 +34,6 @@ type Item = {
     name: string;
     img: string;
 }[];
-const userID = await getProfileID();
-const matches_full = 'https://api.opendota.com/api/players/152850421/matches?significant=0&project=duration&project=game_mode&project=lobby_type&project=start_time&project=hero_id&project=version&project=kills&project=deaths&project=assists&project=leaver_status&project=party_size&project=average_rank&project=hero_variant&project=item_0&project=item_1&project=item_2&project=item_3&project=item_4&project=item_5';
-
 export default function Recent_match() {
     const [matches, setMatches] = useState<Match[]>([]);
     const [heroNameMap, setHeroNameMap] = useState<Map<number, { name: string; img: string }>>(new Map());
@@ -44,8 +42,8 @@ export default function Recent_match() {
     useEffect(() => {
         async function fetchMatches() {
             try {
-                const response = await fetch(`${matches_full}`);
-                const matches: Match[] = await response.json();
+                const response = await getHistoryMatchs();
+                const matches: Match[] = await response;
                 setMatches(matches);
             } catch (error) {
                 console.error('Error fetching matches:', error);
@@ -97,10 +95,10 @@ export default function Recent_match() {
     return (
         <div className="">
             <div className="mt-4">
-                {matches.slice(0, 1).map((match) => {
-                    const isRadiant = match.player_slot < 127;
-                    const didWin = (isRadiant && match.radiant_win) || (!isRadiant && !match.radiant_win);
-                    const BgColor = didWin ? 'border-emerald-500 bg-emerald-100 px-2.5 py-0.5 text-emerald-700' : 'bg-red-100 border-red-500 px-2.5 py-0.5 text-red-700';
+                {matches.slice(0, 1).map((match: Match) => {
+                    const isRadiant: boolean = match.player_slot < 127;
+                    const didWin: boolean = (isRadiant && match.radiant_win) || (!isRadiant && !match.radiant_win);
+                    const BgColor: string = didWin ? 'border-emerald-500 bg-emerald-100 px-2.5 py-0.5 text-emerald-700' : 'bg-red-100 border-red-500 px-2.5 py-0.5 text-red-700';
                     const heroInfo = heroNameMap.get(match.hero_id);
                     return (
                         <div key={match.match_id} className="">
@@ -122,7 +120,7 @@ export default function Recent_match() {
                             </div>
                             <div className='mt-2'>
                                 <div className='grid grid-cols-6 gap-1'>
-                                    {[match.item_0, match.item_1, match.item_2, match.item_3, match.item_4, match.item_5].map((itemId, index) => {
+                                    {[match.item_0, match.item_1, match.item_2, match.item_3, match.item_4, match.item_5].map((itemId: number, index: number) => {
                                         const itemInfo = itemNameMap.get(itemId);
                                         return (
                                             <div key={index} className="
