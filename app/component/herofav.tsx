@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
-const herostatsurl = 'https://dummyjson.com/c/d385-3bc9-4e7e-9352'; // 'https://api.opendota.com/api/players/152850421/heroes'
-const heronamesurl = 'https://dummyjson.com/c/be13-4e90-42b4-90b1'; //https://api.opendota.com/api/heroStats
+import { getHeroStat } from '../data/hero/besthero';
+import getHeroData from '../data/hero/herodata';
 
 export default function Herofav() {
     type HeroStats = {
@@ -27,15 +26,13 @@ export default function Herofav() {
         const fetchData = async () => {
             try {
                 // Fetch hero stats
-                const heroStatsResponse = await fetch(`${herostatsurl}`);
-                if (!heroStatsResponse.ok) throw new Error('Failed to fetch hero stats');
-                const heroStatsData: HeroStats = await heroStatsResponse.json();
+                const heroStatsResponse = await getHeroStat();
+                const heroStatsData: HeroStats = await heroStatsResponse;
                 setHeroStats(heroStatsData);
 
                 // Fetch hero names
-                const heroNameResponse = await fetch(`${heronamesurl}`);
-                if (!heroNameResponse.ok) throw new Error('Failed to fetch hero names');
-                const heroNameData: HeroName = await heroNameResponse.json();
+                const heroNameResponse = await getHeroData();
+                const heroNameData: HeroName = await heroNameResponse;
 
                 // Create a map of hero IDs to hero names and images
                 const heroNameMap = new Map<number, { name: string; img: string }>();
