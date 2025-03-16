@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getHeroStat } from '../data/hero/besthero';
-import getHeroData from '../data/hero/herodata';
+import {getHeroData} from '../data/hero/herodata';
 
 export default function Herofav() {
     type HeroStats = {
