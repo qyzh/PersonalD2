@@ -21,8 +21,7 @@ export default function Profile() {
               Account ID: {Data.profile.account_id} <br />
               Persona Name: {Data.profile.personaname} <br />
               Name: {Data.profile.name}<br />
-              Plus: {Data.profile.plus ? 'Yes' : 'No'}<br />
-               Cheese: {Data.profile.cheese}<br />
+              Dota Plus: {Data.profile.plus ? 'Yes' : 'No'}<br />
               Steam ID: {Data.profile.steamid}<br />
                Avatar:{Data.profile.avatar}<br />
                Avatar Medium: {Data.profile.avatarmedium}<br />
@@ -30,7 +29,6 @@ export default function Profile() {
                Profile URL: {Data.profile.profileurl}<br />
               Last Login: {Data.profile.last_login}<br />
                Country Code: {Data.profile.loccountrycode}<br />
-               Contributor: {Data.profile.is_contributor ? 'Yes' : 'No'}<br />
          </p>
 
                     </div>
