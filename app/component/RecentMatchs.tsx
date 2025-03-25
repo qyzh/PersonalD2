@@ -43,7 +43,7 @@ export default function Recent_match() {
         async function fetchMatches() {
             try {
                 const response = await getHistoryMatchs();
-                const matches: Match[] = await response;
+                const matches: Match[] = response.matches;
                 setMatches(matches);
             } catch (error) {
                 console.error('Error fetching matches:', error);

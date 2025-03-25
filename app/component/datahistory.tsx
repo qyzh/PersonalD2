@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/app/component/ui/Table"
-import { Trophy, ShieldBan } from 'lucide-react';
+import { Trophy, ShieldBan, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getHistoryMatchs } from "@/app/data/game/historymatch";
 interface Match {
     match_id: number;
@@ -42,17 +42,44 @@ const gameModeUrl = `https://dummyjson.com/c/3034-176f-4966-b99e`;
 export default function DataHistory() {
     const [matches, setMatches] = useState<Match[]>([]);
     const [heroNameMap, setHeroNameMap] = useState<Map<number, { name: string; img: string }>>(new Map());
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalMatches, setTotalMatches] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const matchesPerPage = 10;
+
+    // Calculate total pages based on total matches count
+    const totalPages = Math.ceil(totalMatches / matchesPerPage);
+
+    // Load matches for current page
+    const loadMatchesForPage = async (page: number) => {
+        setIsLoading(true);
+        try {
+            const response = await getHistoryMatchs(page, matchesPerPage);
+            const { matches: pageMatches, total } = await response;
+            setMatches(pageMatches);
+            setTotalMatches(total);
+        } catch (error) {
+            console.error('Error fetching matches:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Pagination controls
+    const nextPage = () => {
+        const newPage = Math.min(currentPage + 1, totalPages);
+        setCurrentPage(newPage);
+        loadMatchesForPage(newPage);
+    };
+
+    const prevPage = () => {
+        const newPage = Math.max(currentPage - 1, 1);
+        setCurrentPage(newPage);
+        loadMatchesForPage(newPage);
+    };
 
     useEffect(() => {
-        async function fetchMatches() {
-            try {
-                const response = await getHistoryMatchs();
-                const matches: Match[] = await response;
-                setMatches(matches);
-            } catch (error) {
-                console.error('Error fetching matches:', error);
-            }
-        }
+        loadMatchesForPage(currentPage);
 
         async function fetchHeroNames() {
             try {
@@ -70,8 +97,7 @@ export default function DataHistory() {
             }
         }
 
-        fetchMatches();
-        fetchHeroNames()
+        fetchHeroNames();
     }, []);
 
     const formatDate = (timestamp: number) => {
@@ -102,63 +128,89 @@ export default function DataHistory() {
     }, []);
 
     return (
-        <div className="">
-            <Table>
-                <TableCaption>A list of your recent invoices.</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[100px]">Hero</TableHead>
-                        <TableHead>Result</TableHead>
-                        <TableHead>K</TableHead>
-                        <TableHead>D</TableHead>
-                        <TableHead>A</TableHead>
-                        <TableHead className="text-right">Match ID</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {matches.slice(0, 18).map((match) => {
-                        const isRadiant = match.player_slot < 127;
-                        const didWin = (isRadiant && match.radiant_win) || (!isRadiant && !match.radiant_win);
-                        const BgColor = didWin
-                            ? 'border-emerald-500 bg-emerald-100 px-2.5 py-0.5 text-emerald-700'
-                            : 'bg-red-100 border-red-500 px-2.5 py-0.5 text-red-700';
-                        const heroInfo = heroNameMap.get(match.hero_id);
-                        const Game_Mode = gameModeMap.get(match.game_mode);
-                        return (
-                            <TableRow key={match.match_id} className={`${BgColor}`}>
-                                <TableCell >
-                                    <div className="flex items-center">
-                                        <div className="min-w-12 h-12 pr-2 overflow-hidden object-fill">
-                                            {heroInfo && (
-                                                <img
-                                                    src={`https://cdn.cloudflare.steamstatic.com/${heroInfo?.img}`}
-                                                    alt={heroInfo.name}
-                                                    className="w-full h-full object-cover rounded-sm"
-                                                />
-                                            )}
+        <div className="w-full space-y-4 px-2 sm:px-0">
+            <div className="w-full overflow-x-auto relative rounded-lg">
+                {isLoading && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-800"></div>
+                    </div>
+                )}
+                <Table className="min-w-[300px] sm:min-w-[650px]">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[140px] sm:w-[200px] lg:w-[250px]">Hero</TableHead>
+                            <TableHead className="w-[40px] sm:w-[80px]">Result</TableHead>
+                            <TableHead className="w-[40px] sm:w-[60px]">K</TableHead>
+                            <TableHead className="w-[40px] sm:w-[60px]">D</TableHead>
+                            <TableHead className="w-[40px] sm:w-[60px]">A</TableHead>
+                            <TableHead className="text-right">Match ID</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {matches.map((match) => {
+                            const isRadiant = match.player_slot < 127;
+                            const didWin = (isRadiant && match.radiant_win) || (!isRadiant && !match.radiant_win);
+                            const heroInfo = heroNameMap.get(match.hero_id);
+                            const Game_Mode = gameModeMap.get(match.game_mode);
+                            return (
+                                <TableRow key={match.match_id} className={``}>
+                                    <TableCell className="min-w-[140px] sm:min-w-[200px] lg:min-w-[250px]">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex-shrink-0">
+                                                {heroInfo && (
+                                                    <img
+                                                        src={`https://cdn.cloudflare.steamstatic.com/${heroInfo?.img}`}
+                                                        alt={heroInfo.name}
+                                                        className="w-full h-full object-contain rounded-sm"
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <div className="text-xs sm:text-sm lg:text-base font-medium">{heroInfo?.name}</div>
+                                                <div className="text-[10px] sm:text-xs lg:text-sm text-zinc-400">{formatDate(match.start_time)}</div>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col pr-2">
-                                            <div className="">{heroInfo?.name}</div>
-                                            <div className="text-sm text-zinc-400">{formatDate(match.start_time)}</div>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{
-                                    didWin ?
-                                    <Trophy className="" />
-                                    :
-                                     <ShieldBan className="" />
-                                    }
-                                </TableCell>
-                                <TableCell>{match.kills}</TableCell>
-                                <TableCell>{match.deaths}</TableCell>
-                                <TableCell>{match.assists}</TableCell>
-                                <TableCell className="text-right">{match.match_id}</TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
+                                    </TableCell>
+                                    <TableCell className="w-[40px] sm:w-[80px]">{
+                                        didWin ?
+                                        <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-emerald-500" />
+                                        :
+                                         <ShieldBan className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-500" />
+                                        }
+                                    </TableCell>
+                                    <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.kills}</TableCell>
+                                    <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.deaths}</TableCell>
+                                    <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.assists}</TableCell>
+                                    <TableCell className="text-right text-xs sm:text-sm">{match.match_id}</TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+            
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between">
+                <div className="text-xs sm:text-sm text-zinc-500">
+                    Page {currentPage} of {totalPages}
+                </div>
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                    <button
+                        onClick={prevPage}
+                        disabled={currentPage === 1 || isLoading}
+                        className="p-1 sm:p-2 rounded-md hover:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                    <button
+                        onClick={nextPage}
+                        disabled={currentPage === totalPages || isLoading}
+                        className="p-1 sm:p-2 rounded-md hover:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }
