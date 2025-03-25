@@ -105,7 +105,7 @@ export default function HistoryMatch() {
                             </div>
                             <div className="text-right space-y-1">
                                 <p className={`font-medium ${statusColor}`}>
-                                    {didWin ? 'Victory' : 'Defeat'}
+                                    {didWin ? 'Win' : 'Lose'}
                                 </p>
                                 <p className="text-sm text-muted-foreground">#{match.match_id}</p>
                             </div>
