@@ -59,19 +59,19 @@ export default function Herofav() {
                 const heroInfo = heroNameMap.get(hero.hero_id);
                 return (
                     <div key={hero.hero_id} className="justify-center items-center p-2">
-                                        <div className="">
-                    <div className="size-28 overflow-hidden">
-                    <img
+                        <div className="flex flex-col items-center">
+                            <div className="w-28 h-28 flex-shrink-0">
+                                <img
                                     src={`https://cdn.cloudflare.steamstatic.com/${heroInfo?.img}`}
                                     alt={heroInfo?.name || 'Unknown'}
                                     className="w-full h-full object-cover rounded-sm"
                                 />
+                            </div>
+                            <p className="font-semibold font-mono text-center w-28 truncate">{heroInfo?.name || 'Unknown'}</p>
+                            <p className="font-mono text-sm"> Game play : {hero.games}</p>
+                            <p className="font-mono text-sm"> Win : {hero.win}</p>
+                        </div>
                     </div>
-                    <p className="font-semibold font-mono text-ellipsis md:text-clip">{heroInfo?.name || 'Unknown'} </p>
-                    <p className="font-mono text-sm"> Game play : {hero.games}</p>
-                    <p className="font-mono text-sm"> Win : {hero.win}</p>
-                        </div>
-                        </div>
                 );
             })}
         </div>

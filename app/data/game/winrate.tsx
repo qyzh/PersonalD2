@@ -1,12 +1,45 @@
 import { getProfileID } from '@/app/profile/profiledata';
-type winrate = {
+
+type Winrate = {
     win: number;
     lose: number;
 }
-const userID = await getProfileID();
-export async function getWinrate() {
-    const winrateData = await fetch(`https://api.opendota.com/api/players/${userID}/wl?`);
-    const WinRate: winrate = await winrateData.json();
-    console.log(WinRate);
-    return WinRate;
+
+// Create a resource wrapper
+function wrapPromise<T>(promise: Promise<T>) {
+    let status = 'pending';
+    let result: T;
+    let error: any;
+    
+    const suspender = promise.then(
+        (r) => {
+            status = 'success';
+            result = r;
+        },
+        (e) => {
+            status = 'error';
+            error = e;
+        }
+    );
+
+    return {
+        read() {
+            if (status === 'pending') {
+                throw suspender;
+            } else if (status === 'error') {
+                throw error;
+            } else {
+                return result;
+            }
+        }
+    };
+}
+
+export function fetchWinrate() {
+    const promise = getProfileID()
+        .then(userID => 
+            fetch(`https://api.opendota.com/api/players/${userID}/wl?`)
+                .then(res => res.json())
+        );
+    return wrapPromise<Winrate>(promise);
 }
