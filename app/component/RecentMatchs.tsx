@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+"use client";
+import React, { useMemo } from 'react';
 import { Sword, Skull, Handshake } from 'lucide-react';
 import dataitem from '../data/item/item_ID.json';
 import itemDetails from '../data/item/itemDetail.json';
 import { getHistoryMatchs } from '../data/game/historymatch';
 
-type Match = {
+// Types moved to separate interfaces for better organization
+interface Match {
     match_id: number;
     kills: number;
     deaths: number;
@@ -18,129 +20,208 @@ type Match = {
     item_3: number;
     item_4: number;
     item_5: number;
-};
+}
 
-type HeroName = {
-    id: number;
-    localized_name: string;
-    primary_attr: string;
-    attack_type: string;
+interface HeroInfo {
+    name: string;
     img: string;
-    roles: string[];
-}[];
+}
 
-type Item = {
+interface ItemInfo {
     id: number;
     name: string;
     img: string;
-}[];
-export default function Recent_match() {
-    const [matches, setMatches] = useState<Match[]>([]);
-    const [heroNameMap, setHeroNameMap] = useState<Map<number, { name: string; img: string }>>(new Map());
-    const [itemNameMap, setItemNameMap] = useState<Map<number, { id: number; name: string; img: string }>>(new Map());
+}
 
-    useEffect(() => {
-        async function fetchMatches() {
+interface MatchResourceData {
+    matches: Match[];
+    heroNameMap: Map<number, HeroInfo>;
+    itemNameMap: Map<number, ItemInfo>;
+}
+
+// Separate data fetching logic
+const matchResource = {
+    data: null as MatchResourceData | null,
+    promise: null as Promise<void> | null,
+
+    async load() {
+        if (this.promise) return this.promise;
+        
+        this.promise = (async () => {
             try {
+                // Fetch matches
                 const response = await getHistoryMatchs();
-                const matches: Match[] = response.matches;
-                setMatches(matches);
-            } catch (error) {
-                console.error('Error fetching matches:', error);
-            }
-        }
+                if (!response?.matches) throw new Error('Failed to fetch matches');
 
-        async function fetchHeroNames() {
-            try {
+                // Fetch hero names
                 const heroNameResponse = await fetch(`https://dummyjson.com/c/be13-4e90-42b4-90b1`);
                 if (!heroNameResponse.ok) throw new Error('Failed to fetch hero names');
-                const heroNameData: HeroName = await heroNameResponse.json();
+                const heroNameData = await heroNameResponse.json();
+                if (!Array.isArray(heroNameData)) throw new Error('Invalid hero data format');
 
-                const heroNameMap = new Map<number, { name: string; img: string }>();
+                // Process hero data
+                const heroNameMap = new Map<number, HeroInfo>();
                 heroNameData.forEach((hero) => {
-                    heroNameMap.set(hero.id, { name: hero.localized_name, img: hero.img });
+                    if (hero?.id && hero.localized_name && hero.img) {
+                        heroNameMap.set(hero.id, { 
+                            name: hero.localized_name, 
+                            img: hero.img 
+                        });
+                    }
                 });
-                setHeroNameMap(heroNameMap);
-            } catch (error) {
-                console.error('Error fetching hero names:', error);
-            }
-        }
 
-        async function fetchItemNames() {
-            try {
-            const itemResponse = dataitem;
-            const itemData: Item = Object.entries(itemResponse).map(([key, value]) => {
-                const id: number = typeof value === "number" ? value : parseInt(key);
-                if (id === 0) return null; // Skip items with id 0
-                const name: string = typeof value === 'string' ? value : `Item ${key}`;
-                const itemDetail =  Object.values(itemDetails).find((item) => parseInt(item.id.toString()) === id);
-                const img: string = itemDetail ? itemDetail.img : '';
-                return { id, name, img };
-            }).filter(item => item !== null) as Item;
-            const itemNameMap = new Map<number, { id: number; name: string; img: string }>();
-            itemData.forEach((item) => {
-                itemNameMap.set(item.id, { id: item.id, name: item.name, img: item.img });
-            });
-            setItemNameMap(itemNameMap);
-            } catch (error) {
-            console.error('Error fetching item names:', error);
-            }
-        }
+                // Process item data
+                const itemNameMap = new Map<number, ItemInfo>();
+                Object.entries(dataitem).forEach(([key, value]) => {
+                    const id = typeof value === "number" ? value : parseInt(key);
+                    if (id === 0) return;
+                    
+                    const name = typeof value === 'string' ? value : `Item ${key}`;
+                    const itemDetail = Object.values(itemDetails).find(
+                        (item) => parseInt(item.id.toString()) === id
+                    );
+                    
+                    if (itemDetail?.img) {
+                        itemNameMap.set(id, {
+                            id,
+                            name,
+                            img: itemDetail.img
+                        });
+                    }
+                });
 
-        fetchMatches();
-        fetchHeroNames();
-        fetchItemNames();
-    }, []);
+                this.data = {
+                    matches: response.matches,
+                    heroNameMap,
+                    itemNameMap
+                };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                this.data = null;
+                this.promise = null;
+                throw error;
+            }
+        })();
+        return this.promise;
+    },
+
+    read(): MatchResourceData {
+        if (!this.data) {
+            throw this.load();
+        }
+        return this.data;
+    }
+};
+
+// Separate components for better organization
+const MatchStats: React.FC<{ kills: number; deaths: number; assists: number }> = React.memo(
+    ({ kills, deaths, assists }) => (
+        <div className='flex flex-row gap-2'>
+            <div className='inline-flex items-center'><Sword className='size-4'/>:{kills}</div>
+            <div className='inline-flex items-center'><Skull className='size-4'/>:{deaths}</div>
+            <div className='inline-flex items-center'><Handshake className='size-4'/>:{assists}</div>
+        </div>
+    )
+);
+
+const ItemGrid: React.FC<{ items: number[]; itemNameMap: Map<number, ItemInfo> }> = React.memo(
+    ({ items, itemNameMap }) => (
+        <div className='grid grid-cols-6 gap-2 mt-3 max-w-2xl'>
+            {items.map((itemId: number, index: number) => {
+                const itemInfo = itemNameMap.get(itemId);
+                return (
+                    <div key={index} className="rounded-lg border bg-card text-card-foreground shadow-sm aspect-square flex items-center justify-center p-1">
+                        {itemInfo && (
+                            <img 
+                                src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} 
+                                alt={itemInfo.name} 
+                                className='w-full h-full object-contain rounded-md'
+                                loading="lazy"
+                            />
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    )
+);
+
+export default function RecentMatch() {
+    const { matches, heroNameMap, itemNameMap } = matchResource.read();
+
+    const latestMatch = useMemo(() => matches[0], [matches]);
+    
+    if (!latestMatch) return null;
+
+    const isRadiant = latestMatch.player_slot < 127;
+    const didWin = (isRadiant && latestMatch.radiant_win) || (!isRadiant && !latestMatch.radiant_win);
+    const bgColor = didWin 
+        ? 'border-emerald-500 bg-emerald-100 px-2.5 py-0.5 text-emerald-700' 
+        : 'bg-red-100 border-red-500 px-2.5 py-0.5 text-red-700';
+    const heroInfo = heroNameMap.get(latestMatch.hero_id);
+
+    const items = [
+        latestMatch.item_0, 
+        latestMatch.item_1, 
+        latestMatch.item_2, 
+        latestMatch.item_3, 
+        latestMatch.item_4, 
+        latestMatch.item_5
+    ];
 
     return (
-        <div className="">
-            <div className="mt-4">
-                {matches.slice(0, 1).map((match: Match) => {
-                    const isRadiant: boolean = match.player_slot < 127;
-                    const didWin: boolean = (isRadiant && match.radiant_win) || (!isRadiant && !match.radiant_win);
-                    const BgColor: string = didWin ? 'border-emerald-500 bg-emerald-100 px-2.5 py-0.5 text-emerald-700' : 'bg-red-100 border-red-500 px-2.5 py-0.5 text-red-700';
-                    const heroInfo = heroNameMap.get(match.hero_id);
+        <div className="max-w-3xl">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+                <div className="w-32 h-32 md:w-28 md:h-28 overflow-hidden rounded-lg shadow-md flex-shrink-0">
+                    {heroInfo && (
+                        <img 
+                            src={`https://cdn.cloudflare.steamstatic.com/${heroInfo.img}`} 
+                            alt={heroInfo.name} 
+                            className='w-full h-full object-cover'
+                            loading="lazy"
+                        />
+                    )}
+                </div>
+                
+                <div className="flex flex-col items-center md:items-start gap-2 flex-grow">
+                    <div className="flex flex-row gap-2">
+
+                        <div className="font-semibold text-xl lg:text-lg">
+                            {heroInfo?.name}
+                        </div>
+
+                        <p className={`inline-flex items-center justify-center rounded-md border text-sm ${bgColor}`}>
+                            {didWin ? 'Win' : 'Lose'}
+                        </p>
+                    </div>
+                    
+                    <MatchStats 
+                        kills={latestMatch.kills}
+                        deaths={latestMatch.deaths}
+                        assists={latestMatch.assists}
+                    />
+                    
+                    <div className='grid grid-cols-6 gap-1 mt-2 max-w-lg'>
+                {items.map((itemId: number, index: number) => {
+                    const itemInfo = itemNameMap.get(itemId);
                     return (
-                        <div key={match.match_id} className="">
-                            <div className="flex flex-col md:flex-row gap-2">
-                                <div className="h-32 md:h-28 overflow-hidden object-fill ">
-                                    {heroInfo && <img src={`https://cdn.cloudflare.steamstatic.com/${heroInfo?.img}`} alt={heroInfo.name} className='w-full h-full object-cover rounded-md' />}
-                                </div>
-                            <div className="flex flex-col content-center mt-2">
-                                 <div className="font-semibold text-2xl lg:text-lg xl:text-2xl"> {heroInfo?.name}</div>
-                                 <div className='flex flex-row gap-2'>
-                                <div className='inline-flex items-center'><Sword className='size-4'/>:{match.kills} </div>
-                                <div className='inline-flex items-center'><Skull className='size-4'/>:{match.deaths}</div>
-                                <div className='inline-flex items-center'><Handshake className='size-4'/>:{match.assists}</div>
-                                </div>
-                                <p className={`inline items-center justify-center rounded border px-2.5 py-0.5 ${BgColor}`}>
-                                    {didWin ? 'Win' : 'Lose'}
-                                </p>
-                            </div>
-                            </div>
-                            <div className='mt-2'>
-                                <div className='grid grid-cols-6 gap-1'>
-                                    {[match.item_0, match.item_1, match.item_2, match.item_3, match.item_4, match.item_5].map((itemId: number, index: number) => {
-                                        const itemInfo = itemNameMap.get(itemId);
-                                        return (
-                                            <div key={index} className="
-                                                rounded-xl
-                                                border bg-card
-                                                text-card-foreground
-                                                shadow
-                                                p-2
-                                                ">
-                                                {itemInfo && <img src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} alt={itemInfo.name} className='size-12 rounded-xl object-fill' />}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                        <div key={index} className="rounded-md border bg-card text-card-foreground shadow-sm aspect-square flex items-center justify-center w-10 h-10">
+                            {itemInfo && (
+                                <img 
+                                    src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} 
+                                    alt={itemInfo.name} 
+                                    className='w-9 h-9 object-contain rounded-sm'
+                                    loading="lazy"
+                                />
+                            )}
                         </div>
                     );
                 })}
-
             </div>
+                
+                </div>
+            </div>
+            
         </div>
     );
 }

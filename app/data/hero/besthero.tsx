@@ -1,7 +1,9 @@
 import { getProfileID } from '@/app/profile/profiledata';
-const userID = await getProfileID();
+import { fetchWithRateLimit } from '@/app/utils/api';
+
 export async function getHeroStat() {
-    const data = await fetch(`https://api.opendota.com/api/players/${userID}/heroes`)
-    const herostats = await data.json()
-    return herostats;
-  }
+    const userID = await getProfileID();
+    const url = `https://api.opendota.com/api/players/${userID}/heroes`;
+    const cacheKey = `hero_stats_${userID}`;
+    return fetchWithRateLimit<any>(url, cacheKey);
+}

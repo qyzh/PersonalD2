@@ -20,6 +20,7 @@ import FBhistorygame from './suspend/FBhistory';
 import FBbesthero from './suspend/FBbesthero';
 import Footer from './component/footer';
 import { getProfileUserName } from './profile/profiledata';
+import { ErrorBoundary } from './component/ErrorBoundary';
 
 const userName = await getProfileUserName();
 export default function Home() {
@@ -34,9 +35,11 @@ export default function Home() {
 <SHeader header={`Hi, ${userName}`}  desc="Welcome to your dashboard" />
         <div className="grid lg:grid-cols-3 lg:grid-rows-1 gap-2">
             <div>
+                <ErrorBoundary>
                     <Suspense fallback={<FBWinrate />}>
                         <Winrate />
                     </Suspense>
+                </ErrorBoundary>
             </div>
             <div>
             <Card>
@@ -45,9 +48,11 @@ export default function Home() {
                     <CardDescription>Lastest Game</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Suspense fallback={<FBrecentgame />}>
-                        <RecentMatch/>
-                    </Suspense>
+                    <ErrorBoundary>
+                        <Suspense fallback={<FBrecentgame />}>
+                            <RecentMatch/>
+                        </Suspense>
+                    </ErrorBoundary>
                 </CardContent>
             </Card>
             </div>
@@ -58,9 +63,11 @@ export default function Home() {
                     <CardDescription>History of ur Journey</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Suspense fallback={<FBhistorygame />}>
-                        <HistoryMatch />
-                    </Suspense>
+                    <ErrorBoundary>
+                        <Suspense fallback={<FBhistorygame />}>
+                            <HistoryMatch />
+                        </Suspense>
+                    </ErrorBoundary>
                 </CardContent>
             </Card>
             </div>
@@ -71,9 +78,11 @@ export default function Home() {
                     <CardDescription>Your best 6 heros</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Suspense fallback={<FBbesthero />}>
-                        <Herofav />
-                    </Suspense>
+                    <ErrorBoundary>
+                        <Suspense fallback={<FBbesthero />}>
+                            <Herofav />
+                        </Suspense>
+                    </ErrorBoundary>
                 </CardContent>
             </Card>
             </div>

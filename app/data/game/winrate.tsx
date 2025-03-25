@@ -1,4 +1,5 @@
 import { getProfileID } from '@/app/profile/profiledata';
+import { fetchWithRateLimit } from '../../utils/api';
 
 type Winrate = {
     win: number;
@@ -35,11 +36,15 @@ function wrapPromise<T>(promise: Promise<T>) {
     };
 }
 
+// Add API key to your requests
+const API_KEY = process.env.NEXT_PUBLIC_OPENDOTA_API_KEY;
+
 export function fetchWinrate() {
     const promise = getProfileID()
-        .then(userID => 
-            fetch(`https://api.opendota.com/api/players/${userID}/wl?`)
-                .then(res => res.json())
-        );
+        .then(async userID => {
+            const url = `https://api.opendota.com/api/players/${userID}/wl`;
+            const cacheKey = `winrate_${userID}`;
+            return fetchWithRateLimit<Winrate>(url, cacheKey);
+        });
     return wrapPromise<Winrate>(promise);
 }
