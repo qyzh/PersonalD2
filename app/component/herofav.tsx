@@ -86,9 +86,9 @@ export default function Herofav() {
                                     className="w-full h-full object-cover rounded-sm"
                                 />
                             </div>
-                            <p className="font-semibold font-mono text-center w-28 truncate">{heroInfo?.name || 'Unknown'}</p>
-                            <p className="font-mono text-sm"> Game play : {hero.games}</p>
-                            <p className="font-mono text-sm"> Win : {hero.win}</p>
+                            <p className="font-semibold  text-center w-28 truncate">{heroInfo?.name || 'Unknown'}</p>
+                            <p className="text-sm"> Game play : {hero.games}</p>
+                            <p className="text-sm"> Win : {hero.win}</p>
                         </div>
                     </div>
                 );
