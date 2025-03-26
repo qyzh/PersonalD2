@@ -9,7 +9,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-  } from './component/SDCard';
+} from './component/SDCard';
 import SHeader from './component/sheader';
 import Winrate from './component/winrate';
 import Herofav from './component/herofav';
@@ -22,74 +22,98 @@ import Footer from './component/footer';
 import { getProfileUserName } from './profile/profiledata';
 import { ErrorBoundary } from './component/ErrorBoundary';
 
+interface DashboardCardProps {
+    title: string;
+    description: string;
+    children: React.ReactNode;
+    className?: string;
+}
+
+const DashboardCard: React.FC<DashboardCardProps> = ({ 
+    title, 
+    description, 
+    children, 
+    className = '' 
+}) => (
+    <Card className={className}>
+        <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+            {children}
+        </CardContent>
+    </Card>
+);
+
+const SuspenseWrapper: React.FC<{
+    fallback: React.ReactNode;
+    children: React.ReactNode;
+}> = ({ fallback, children }) => (
+    <ErrorBoundary>
+        <Suspense fallback={fallback}>
+            {children}
+        </Suspense>
+    </ErrorBoundary>
+);
+
 const userName = await getProfileUserName();
+
 export default function Home() {
-  return (
-    <div className="flex h-screen ">
-        <div className='flex flex-col min-w-[49px] '>
-     <NavSide />
+    return (
+        <div className="flex h-screen">
+            <div className='flex flex-col min-w-[49px]'>
+                <NavSide />
+            </div>
+            <main className="flex flex-1 flex-col">
+                <Breadcrumb />
+                <div className='mx-auto container px-6 py-6'>
+                    <SHeader 
+                        header={`Hi, ${userName}`} 
+                        desc="Welcome to your dashboard" 
+                    />
+                    <div className="grid lg:grid-cols-3 lg:grid-rows-1 gap-2">
+                        <DashboardCard 
+                            title="Win Rate" 
+                            description="Your current win rate statistics"
+                        >
+                            <SuspenseWrapper fallback={<FBWinrate />}>
+                                <Winrate />
+                            </SuspenseWrapper>
+                        </DashboardCard>
+                        
+                        <DashboardCard 
+                            title="Recent Game" 
+                            description="Latest Game"
+                        >
+                            <SuspenseWrapper fallback={<FBrecentgame />}>
+                                <RecentMatch />
+                            </SuspenseWrapper>
+                        </DashboardCard>
+
+                        <DashboardCard 
+                            title="History Match" 
+                            description="History of ur Journey"
+                            className="row-span-2"
+                        >
+                            <SuspenseWrapper fallback={<FBhistorygame />}>
+                                <HistoryMatch />
+                            </SuspenseWrapper>
+                        </DashboardCard>
+
+                        <DashboardCard 
+                            title="Best Hero" 
+                            description="Your best 6 heros"
+                            className="lg:col-span-2"
+                        >
+                            <SuspenseWrapper fallback={<FBbesthero />}>
+                                <Herofav />
+                            </SuspenseWrapper>
+                        </DashboardCard>
+                    </div>
+                </div>
+                <Footer />
+            </main>
         </div>
-      <main className="flex flex-1 flex-col">
-      <Breadcrumb />
-      <div className='mx-auto container px-6 py-6'>
-<SHeader header={`Hi, ${userName}`}  desc="Welcome to your dashboard" />
-        <div className="grid lg:grid-cols-3 lg:grid-rows-1 gap-2">
-            <div>
-                <ErrorBoundary>
-                    <Suspense fallback={<FBWinrate />}>
-                        <Winrate />
-                    </Suspense>
-                </ErrorBoundary>
-            </div>
-            <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Recent Game</CardTitle>
-                    <CardDescription>Lastest Game</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ErrorBoundary>
-                        <Suspense fallback={<FBrecentgame />}>
-                            <RecentMatch/>
-                        </Suspense>
-                    </ErrorBoundary>
-                </CardContent>
-            </Card>
-            </div>
-            <div className="row-span-2">
-            <Card>
-                <CardHeader>
-                    <CardTitle>History Match</CardTitle>
-                    <CardDescription>History of ur Journey</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ErrorBoundary>
-                        <Suspense fallback={<FBhistorygame />}>
-                            <HistoryMatch />
-                        </Suspense>
-                    </ErrorBoundary>
-                </CardContent>
-            </Card>
-            </div>
-            <div className="lg:col-span-2">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Best Hero</CardTitle>
-                    <CardDescription>Your best 6 heros</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ErrorBoundary>
-                        <Suspense fallback={<FBbesthero />}>
-                            <Herofav />
-                        </Suspense>
-                    </ErrorBoundary>
-                </CardContent>
-            </Card>
-            </div>
-        </div>
-        </div>
-        <Footer/>
-      </main>
-    </div>
-  );
+    );
 }
