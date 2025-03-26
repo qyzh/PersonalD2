@@ -5,7 +5,7 @@ interface CacheItem<T> {
 
 class Cache {
     private static instance: Cache;
-    private cache: Map<string, CacheItem<any>>;
+    private cache: Map<string, CacheItem<unknown>>;
     private readonly DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
     private constructor() {
