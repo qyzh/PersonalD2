@@ -96,9 +96,12 @@ export default function HistoryMatch() {
                     const heroInfo = heroNameMap.get(match.hero_id);
                     
                     return (
-                        <div
+                        <Link
                             key={match.match_id}
-                            className="flex items-center justify-between p-3 rounded-lg border bg-card/50 hover:bg-card/80 transition-colors">
+                            href={`/matches/${match.match_id}`}
+                            className="flex items-center justify-between p-3 rounded-lg border bg-card/50 hover:bg-card/80 transition-colors
+                            hover:cursor-pointer
+                            hover:border-primary">
                             <div className="space-y-1">
                                 <p className="font-medium">{heroInfo?.name}</p>
                                 <MatchStats kills={match.kills} deaths={match.deaths} assists={match.assists} />
@@ -109,7 +112,7 @@ export default function HistoryMatch() {
                                 </p>
                                 <p className="text-sm text-muted-foreground">#{match.match_id}</p>
                             </div>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>
