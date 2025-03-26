@@ -9,6 +9,31 @@ interface WLData {
     lose: number;
 }
 
+interface Match {
+    match_id: number;
+    duration: number;
+    game_mode: number;
+    lobby_type: number;
+    start_time: number;
+    hero_id: number;
+    version: number;
+    kills: number;
+    deaths: number;
+    assists: number;
+    leaver_status: number;
+    party_size: number;
+    average_rank: number;
+    hero_variant: number;
+    item_0: number;
+    item_1: number;
+    item_2: number;
+    item_3: number;
+    item_4: number;
+    item_5: number;
+    player_slot: number;
+    radiant_win: boolean;
+}
+
 export async function getHistoryMatchs(page: number = 1, limit: number = 10) {
     const userID = await getProfileID();
     const offset = (page - 1) * limit;
@@ -21,7 +46,7 @@ export async function getHistoryMatchs(page: number = 1, limit: number = 10) {
 
     // Make both requests with rate limiting
     const [matches, wlData] = await Promise.all([
-        fetchWithRateLimit<any>(matchesUrl, matchesCacheKey),
+        fetchWithRateLimit<Match[]>(matchesUrl, matchesCacheKey),
         fetchWithRateLimit<WLData>(wlUrl, wlCacheKey)
     ]);
 
