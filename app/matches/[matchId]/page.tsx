@@ -40,6 +40,13 @@ interface Match {
   players: MatchPlayer[];
 }
 
+type Props = {
+  params: {
+    matchId: string;
+  };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
 async function getMatch(matchId: string): Promise<Match> {
   const res = await fetch(`https://api.opendota.com/api/matches/${matchId}`, {
     next: { revalidate: 3600 }, // Cache for 1 hour
@@ -52,7 +59,7 @@ async function getMatch(matchId: string): Promise<Match> {
   return res.json();
 }
 
-export async function generateMetadata({ params }: { params: { matchId: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { matchId } = await Promise.resolve(params);
   
   if (!matchId) {
@@ -92,7 +99,7 @@ export async function generateMetadata({ params }: { params: { matchId: string }
   }
 }
 
-export default async function MatchPage({ params }: { params: { matchId: string } }) {
+export default async function MatchPage({ params }: Props) {
   try {
     const match = await getMatch(params.matchId);
 
