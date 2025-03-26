@@ -123,6 +123,7 @@ const MatchStats: React.FC<{ kills: number; deaths: number; assists: number }> =
         </div>
     )
 );
+MatchStats.displayName = 'MatchStats';
 
 const ItemGrid: React.FC<{ items: number[]; itemNameMap: Map<number, ItemInfo> }> = React.memo(
     ({ items, itemNameMap }) => (
@@ -145,6 +146,7 @@ const ItemGrid: React.FC<{ items: number[]; itemNameMap: Map<number, ItemInfo> }
         </div>
     )
 );
+ItemGrid.displayName = 'ItemGrid';
 
 export default function RecentMatch() {
     const { matches, heroNameMap, itemNameMap } = matchResource.read();

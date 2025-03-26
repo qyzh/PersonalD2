@@ -82,6 +82,7 @@ const MatchStats: React.FC<{ kills: number; deaths: number; assists: number }> =
         </div>
     )
 );
+MatchStats.displayName = 'MatchStats';
 
 export default function HistoryMatch() {
     const { matches, heroNameMap } = historyResource.read();
