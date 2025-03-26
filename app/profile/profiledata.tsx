@@ -25,7 +25,7 @@ interface CacheEntry<T> {
 
 class Cache {
     private static instance: Cache;
-    private cache: Map<string, CacheEntry<any>>;
+    private cache: Map<string, CacheEntry<unknown>>;
     private readonly TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
     private readonly RATE_LIMIT = 60; // requests per minute
     private requestTimestamps: number[];
@@ -62,7 +62,7 @@ class Cache {
         const cached = this.cache.get(key);
 
         if (cached && now - cached.timestamp < this.TTL) {
-            return cached.data;
+            return cached.data as T;
         }
 
         if (this.isRateLimited()) {

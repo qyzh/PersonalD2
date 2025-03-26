@@ -10,7 +10,7 @@ type Winrate = {
 function wrapPromise<T>(promise: Promise<T>) {
     let status = 'pending';
     let result: T;
-    let error: any;
+    let error: Error;
     
     const suspender = promise.then(
         (r) => {
