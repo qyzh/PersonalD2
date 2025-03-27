@@ -12,8 +12,53 @@ import {
 
 import { Clock9Icon, Coins, Info, TestTubeDiagonal } from "lucide-react";
 
+const qualityColors = {
+  rare: "#1A87F9",
+  artifact: "#E29B01",
+  secret_shop: "#FFFFFF",
+  consumable: "#1D80E7",
+  common: "#2BAB01",
+  epic: "#B812F9",
+  component: "#FFFFFF"
+} as const
+
+// Add these interfaces at the top of the file after the imports
+interface ItemQuality {
+  rare: string
+  artifact: string
+  secret_shop: string
+  consumable: string
+  common: string
+  epic: string
+  component: string
+}
+
+interface ItemAttribute {
+  key: string
+  value: string
+}
+
+interface ItemDetail {
+  id: number
+  dname?: string
+  qual?: keyof ItemQuality
+  img?: string
+  cost?: number
+  cd?: number
+  mc?: number
+  lore?: string
+  attrib?: ItemAttribute[]
+  notes?: string
+}
+
+function getQualityBorder(item: ItemDetail | null) {
+  if (!item?.qual) return { border: '2px solid transparent' }
+  const color = qualityColors[item.qual] || '#FFFFFF'
+  return { border: `2px solid ${color}` }
+}
+
 // Separate component for item details to improve readability and reusability
-function ItemDetails({ item }: { item: any }) {
+function ItemDetails({ item }: { item: ItemDetail | null }) {
   if (!item) return null
 
   return (
@@ -21,7 +66,7 @@ function ItemDetails({ item }: { item: any }) {
       <div className='p-4 mx-auto container max-w-3xs pl-12'>
         <DrawerHeader>
           <DrawerTitle>
-            {item.dname?.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()) || 'Unknown Item'}
+            {item.dname?.replace(/_/g, ' ').replace(/\b\w/g, (char: string) => char.toUpperCase()) || 'Unknown Item'}
           </DrawerTitle>
           <DrawerDescription>
             {item.lore && <div className='italic mb-2'>{item.lore}</div>}
@@ -72,7 +117,6 @@ function ItemDetails({ item }: { item: any }) {
 }
 
 export async function ItemList() {
-    // Pre-filter and transform the data
     const filteredItems = Object.entries(data)
         .filter(([_, value]) => {
             const name: string = typeof value === 'string' ? value : ''
@@ -80,48 +124,35 @@ export async function ItemList() {
         })
         .map(([key, value]) => {
             const id: number = typeof value === "number" ? value : parseInt(key)
-            const itemDetail = Object.values(itemDetails).find((item) => parseInt(item.id.toString()) === id)
+            const itemDetail = Object.values(itemDetails).find((item) => parseInt(item.id.toString()) === id) as ItemDetail | undefined
             return { id, itemDetail }
         })
         .sort((a, b) => {
-            const qualA = a.itemDetail && 'qual' in a.itemDetail ? a.itemDetail.qual : ''
-            const qualB = b.itemDetail && 'qual' in b.itemDetail ? b.itemDetail.qual : ''
+            const qualA = a.itemDetail?.qual ?? ''
+            const qualB = b.itemDetail?.qual ?? ''
             return qualA.localeCompare(qualB)
         })
 
-    // Group items by quality
-    const groupedItems = filteredItems.reduce((acc, item) => {
-        const qual = item.itemDetail && 'qual' in item.itemDetail ? item.itemDetail.qual : 'Unknown'
-        if (!acc[qual]) {
-            acc[qual] = []
-        }
-        acc[qual].push(item)
-        return acc
-    }, {} as Record<string, typeof filteredItems>)
-
     return (
         <div className='mx-auto container'>
-            {Object.entries(groupedItems).map(([qual, items]) => (
-                <div key={qual} className='mb-8'>
-                    <h2 className='text-2xl font-bold mb-4 capitalize'>{qual}</h2>
-                    <div className='grid grid-cols-5 lg:grid-cols-12 gap-2'>
-                        {items.map(({ id, itemDetail }) => (
-                            <div key={id} className='flex justify-center'>
-                                <Drawer>
-                                    <DrawerTrigger>
-                                        <img 
-                                            src={`https://cdn.cloudflare.steamstatic.com/${itemDetail?.img || ''}`} 
-                                            alt={itemDetail && 'dname' in itemDetail ? itemDetail.dname : `Item ${id}`}
-                                            className='object-none'
-                                        />
-                                    </DrawerTrigger>
-                                    <ItemDetails item={itemDetail} />
-                                </Drawer>
-                            </div>
-                        ))}
+            <div className='grid grid-cols-5 lg:grid-cols-12 gap-2'>
+                {filteredItems.map(({ id, itemDetail }) => (
+                    <div key={id} className='flex justify-center'>
+                        <Drawer>
+                            <DrawerTrigger>
+                                <div className="p-1 rounded-lg" style={getQualityBorder(itemDetail || null)}>
+                                    <img 
+                                        src={`https://cdn.cloudflare.steamstatic.com/${itemDetail?.img || ''}`} 
+                                        alt={itemDetail?.dname || `Item ${id}`}
+                                        className='object-none'
+                                    />
+                                </div>
+                            </DrawerTrigger>
+                            <ItemDetails item={itemDetail || null} />
+                        </Drawer>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 }
