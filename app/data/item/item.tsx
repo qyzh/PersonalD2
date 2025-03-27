@@ -117,7 +117,6 @@ function ItemDetails({ item }: { item: ItemDetail | null }) {
 }
 
 export async function ItemList() {
-    // Pre-filter and transform the data
     const filteredItems = Object.entries(data)
         .filter(([_, value]) => {
             const name: string = typeof value === 'string' ? value : ''
@@ -125,12 +124,12 @@ export async function ItemList() {
         })
         .map(([key, value]) => {
             const id: number = typeof value === "number" ? value : parseInt(key)
-            const itemDetail = Object.values(itemDetails).find((item) => parseInt(item.id.toString()) === id)
+            const itemDetail = Object.values(itemDetails).find((item) => parseInt(item.id.toString()) === id) as ItemDetail | undefined
             return { id, itemDetail }
         })
         .sort((a, b) => {
-            const qualA = a.itemDetail && 'qual' in a.itemDetail ? a.itemDetail.qual : ''
-            const qualB = b.itemDetail && 'qual' in b.itemDetail ? b.itemDetail.qual : ''
+            const qualA = a.itemDetail?.qual ?? ''
+            const qualB = b.itemDetail?.qual ?? ''
             return qualA.localeCompare(qualB)
         })
 
@@ -141,15 +140,15 @@ export async function ItemList() {
                     <div key={id} className='flex justify-center'>
                         <Drawer>
                             <DrawerTrigger>
-                                <div className="p-1 rounded-lg" style={getQualityBorder(itemDetail)}>
+                                <div className="p-1 rounded-lg" style={getQualityBorder(itemDetail || null)}>
                                     <img 
                                         src={`https://cdn.cloudflare.steamstatic.com/${itemDetail?.img || ''}`} 
-                                        alt={itemDetail && 'dname' in itemDetail ? itemDetail.dname : `Item ${id}`}
+                                        alt={itemDetail?.dname || `Item ${id}`}
                                         className='object-none'
                                     />
                                 </div>
                             </DrawerTrigger>
-                            <ItemDetails item={itemDetail} />
+                            <ItemDetails item={itemDetail || null} />
                         </Drawer>
                     </div>
                 ))}
