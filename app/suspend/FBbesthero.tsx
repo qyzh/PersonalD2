@@ -1,48 +1,21 @@
 export default function FBbesthero() {
+    // Create an array to represent the number of placeholder items
+    const placeholderCount = 6
+    
     return (
-        <div className="font-mono animate-pulse">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 place-items-center mt-4">
-            <div className="flex flex-col items-center space-2 gap-2">
-                    <div className="bg-zinc-800 rounded-md h-32 w-32 "></div>
-                    <div className="w-28 h-6 bg-zinc-800 rounded-md "></div>
-                    <div className="flex flex-row space-x-2">
-                                <div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                /<div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 place-items-center mt-4">
+            {Array.from({ length: placeholderCount }).map((_, index) => (
+                <div key={index} className="justify-center items-center p-2">
+                    <div className="flex flex-col items-center">
+                        <div className="w-28 h-28 flex-shrink-0">
+                            <div className="animate-pulse bg-neutral-900 w-full h-full border rounded-md"></div>
+                        </div>
+                        <p className="font-semibold text-center w-28 truncate"></p>
+                        <p className="text-sm"> Game play : ...</p>
+                        <p className="text-sm"> Win : ...</p>
+                    </div>
                 </div>
-                <div className="flex flex-col items-center space-2 gap-2">
-                    <div className="bg-zinc-800 rounded-md h-32 w-32 "></div>
-                    <div className="w-28 h-6 bg-zinc-800 rounded-md "></div>
-                    <div className="flex flex-row space-x-2">
-                                <div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                /<div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                </div>
-                </div>
-                <div className="flex flex-col items-center space-2 gap-2">
-                    <div className="bg-zinc-800 rounded-md h-32 w-32 "></div>
-                    <div className="w-28 h-6 bg-zinc-800 rounded-md "></div>
-                    <div className="flex flex-row space-x-2">
-                                <div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                /<div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                </div>
-                </div>
-                <div className="flex flex-col items-center space-2 gap-2">
-                    <div className="bg-zinc-800 rounded-md h-32 w-32 "></div>
-                    <div className="w-28 h-6 bg-zinc-800 rounded-md "></div>
-                    <div className="flex flex-row space-x-2">
-                                <div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                /<div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                </div>
-                </div>
-                <div className="flex flex-col items-center space-2 gap-2">
-                    <div className="bg-zinc-800 rounded-md h-32 w-32 "></div>
-                    <div className="w-28 h-6 bg-zinc-800 rounded-md "></div>
-                    <div className="flex flex-row space-x-2">
-                                <div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                /<div className="w-10 h-6 bg-zinc-800 rounded-md animate-pulse"></div>
-                                </div>
-                </div>
-            </div>
+            ))}
         </div>
     );
 }

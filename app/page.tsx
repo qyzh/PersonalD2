@@ -78,7 +78,7 @@ export default function Home() {
                             description="Your current win rate statistics"
                         >
                             <SuspenseWrapper fallback={<FBWinrate />}>
-                                <Winrate />
+                                 <Winrate /> 
                             </SuspenseWrapper>
                         </DashboardCard>
                         
@@ -87,7 +87,7 @@ export default function Home() {
                             description="Latest Game"
                         >
                             <SuspenseWrapper fallback={<FBrecentgame />}>
-                                <RecentMatch />
+                               <RecentMatch /> 
                             </SuspenseWrapper>
                         </DashboardCard>
 
@@ -97,7 +97,7 @@ export default function Home() {
                             className="row-span-2"
                         >
                             <SuspenseWrapper fallback={<FBhistorygame />}>
-                                <HistoryMatch />
+                               <HistoryMatch /> 
                             </SuspenseWrapper>
                         </DashboardCard>
 
@@ -107,7 +107,7 @@ export default function Home() {
                             className="lg:col-span-2"
                         >
                             <SuspenseWrapper fallback={<FBbesthero />}>
-                                <Herofav />
+                             <Herofav /> 
                             </SuspenseWrapper>
                         </DashboardCard>
                     </div>
