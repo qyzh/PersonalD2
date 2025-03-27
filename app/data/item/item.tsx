@@ -22,14 +22,43 @@ const qualityColors = {
   component: "#FFFFFF"
 } as const
 
-function getQualityBorder(item: any) {
+// Add these interfaces at the top of the file after the imports
+interface ItemQuality {
+  rare: string
+  artifact: string
+  secret_shop: string
+  consumable: string
+  common: string
+  epic: string
+  component: string
+}
+
+interface ItemAttribute {
+  key: string
+  value: string
+}
+
+interface ItemDetail {
+  id: number
+  dname?: string
+  qual?: keyof ItemQuality
+  img?: string
+  cost?: number
+  cd?: number
+  mc?: number
+  lore?: string
+  attrib?: ItemAttribute[]
+  notes?: string
+}
+
+function getQualityBorder(item: ItemDetail | null) {
   if (!item || !('qual' in item)) return { border: '2px solid transparent' }
-  const color = qualityColors[item.qual as keyof typeof qualityColors] || '#FFFFFF'
+  const color = qualityColors[item.qual] || '#FFFFFF'
   return { border: `2px solid ${color}` }
 }
 
 // Separate component for item details to improve readability and reusability
-function ItemDetails({ item }: { item: any }) {
+function ItemDetails({ item }: { item: ItemDetail | null }) {
   if (!item) return null
 
   return (
