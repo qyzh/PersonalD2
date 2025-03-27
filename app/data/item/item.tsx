@@ -52,7 +52,7 @@ interface ItemDetail {
 }
 
 function getQualityBorder(item: ItemDetail | null) {
-  if (!item || !('qual' in item)) return { border: '2px solid transparent' }
+  if (!item?.qual) return { border: '2px solid transparent' }
   const color = qualityColors[item.qual] || '#FFFFFF'
   return { border: `2px solid ${color}` }
 }
