@@ -101,7 +101,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function MatchPage({ params }: Props) {
   try {
-    const match = await getMatch(params.matchId);
+    const { matchId } = await Promise.resolve(params);
+    const match = await getMatch(matchId);
 
     return (
       <div className="flex h-screen">
