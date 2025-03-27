@@ -12,6 +12,22 @@ import {
 
 import { Clock9Icon, Coins, Info, TestTubeDiagonal } from "lucide-react";
 
+const qualityColors = {
+  rare: "#1A87F9",
+  artifact: "#E29B01",
+  secret_shop: "#FFFFFF",
+  consumable: "#1D80E7",
+  common: "#2BAB01",
+  epic: "#B812F9",
+  component: "#FFFFFF"
+} as const
+
+function getQualityBorder(item: any) {
+  if (!item || !('qual' in item)) return { border: '2px solid transparent' }
+  const color = qualityColors[item.qual as keyof typeof qualityColors] || '#FFFFFF'
+  return { border: `2px solid ${color}` }
+}
+
 // Separate component for item details to improve readability and reusability
 function ItemDetails({ item }: { item: any }) {
   if (!item) return null
@@ -21,7 +37,7 @@ function ItemDetails({ item }: { item: any }) {
       <div className='p-4 mx-auto container max-w-3xs pl-12'>
         <DrawerHeader>
           <DrawerTitle>
-            {item.dname?.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()) || 'Unknown Item'}
+            {item.dname?.replace(/_/g, ' ').replace(/\b\w/g, (char: string) => char.toUpperCase()) || 'Unknown Item'}
           </DrawerTitle>
           <DrawerDescription>
             {item.lore && <div className='italic mb-2'>{item.lore}</div>}
@@ -89,39 +105,26 @@ export async function ItemList() {
             return qualA.localeCompare(qualB)
         })
 
-    // Group items by quality
-    const groupedItems = filteredItems.reduce((acc, item) => {
-        const qual = item.itemDetail && 'qual' in item.itemDetail ? item.itemDetail.qual : 'Unknown'
-        if (!acc[qual]) {
-            acc[qual] = []
-        }
-        acc[qual].push(item)
-        return acc
-    }, {} as Record<string, typeof filteredItems>)
-
     return (
         <div className='mx-auto container'>
-            {Object.entries(groupedItems).map(([qual, items]) => (
-                <div key={qual} className='mb-8'>
-                    <h2 className='text-2xl font-bold mb-4 capitalize'>{qual}</h2>
-                    <div className='grid grid-cols-5 lg:grid-cols-12 gap-2'>
-                        {items.map(({ id, itemDetail }) => (
-                            <div key={id} className='flex justify-center'>
-                                <Drawer>
-                                    <DrawerTrigger>
-                                        <img 
-                                            src={`https://cdn.cloudflare.steamstatic.com/${itemDetail?.img || ''}`} 
-                                            alt={itemDetail && 'dname' in itemDetail ? itemDetail.dname : `Item ${id}`}
-                                            className='object-none'
-                                        />
-                                    </DrawerTrigger>
-                                    <ItemDetails item={itemDetail} />
-                                </Drawer>
-                            </div>
-                        ))}
+            <div className='grid grid-cols-5 lg:grid-cols-12 gap-2'>
+                {filteredItems.map(({ id, itemDetail }) => (
+                    <div key={id} className='flex justify-center'>
+                        <Drawer>
+                            <DrawerTrigger>
+                                <div className="p-1 rounded-lg" style={getQualityBorder(itemDetail)}>
+                                    <img 
+                                        src={`https://cdn.cloudflare.steamstatic.com/${itemDetail?.img || ''}`} 
+                                        alt={itemDetail && 'dname' in itemDetail ? itemDetail.dname : `Item ${id}`}
+                                        className='object-none'
+                                    />
+                                </div>
+                            </DrawerTrigger>
+                            <ItemDetails item={itemDetail} />
+                        </Drawer>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 }
