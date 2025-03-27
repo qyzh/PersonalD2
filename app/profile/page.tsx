@@ -5,10 +5,12 @@ import { getProfileData } from './profiledata';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../component/ui/Card';
 import { Badge } from '../component/ui/Badge';
 import { Separator } from '../component/ui/Separator';
-import { Globe, User, Calendar, Shield, Link as LinkIcon } from 'lucide-react';
-
+import { Globe, User, Calendar, Shield, Link as LinkIcon, Clock, Trophy, GamepadIcon, History } from 'lucide-react';
+import { fetchWinrate } from '../data/game/winrate';
+import { getHistoryMatchs } from '../data/game/historymatch';
 const Data = await getProfileData();
-
+const datamatches = await fetchWinrate();
+const matches = await getHistoryMatchs();
 export default function Profile() {
     return (
         <div className="flex h-screen">
@@ -95,6 +97,62 @@ export default function Profile() {
                                     >
                                         {Data.profile.profileurl}
                                     </a>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Game Statistics Card */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Game Statistics</CardTitle>
+                                <CardDescription>Your Dota 2 gameplay information</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <Trophy className="w-4 h-4" />
+                                            <span>Current Rank</span>
+                                        </div>
+                                        <p className="flex items-center gap-2">
+                                            <div className="relative flex items-center justify-center w-12 h-12">
+                                                <img 
+                                                    src={`https://www.opendota.com/assets/images/dota2/rank_icons/rank_icon_${Math.floor(Data.rank_tier / 10)}.png`} 
+                                                    alt="Rank" 
+                                                    className="w-8 h-8"
+                                                />
+                                                <div className="absolute top-0 left-0 right-0 flex justify-center">
+                                                    {[...Array(Data.rank_tier % 10)].map((_, i) => (
+                                                        <span key={i} className="text-white text-xs">★</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <Clock className="w-4 h-4" />
+                                            <span>Total Playtime</span>
+                                        </div>
+                                        <p>{Math.floor(Data.playtime_hours)} hours</p>
+                                    </div>
+                                </div>
+                                <Separator />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <GamepadIcon className="w-4 h-4" />
+                                            <span>Total Matches</span>
+                                        </div>
+                                        <p>{(datamatches.read().win || 0) + (datamatches.read().lose || 0)} Matches</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <History className="w-4 h-4" />
+                                            <span>First Match</span>
+                                        </div>
+                                        <p>{new Date(Data.first_match_date).toLocaleDateString()}</p>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
