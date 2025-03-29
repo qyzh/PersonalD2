@@ -136,7 +136,7 @@ const ItemGrid: React.FC<{ items: number[]; itemNameMap: Map<number, ItemInfo> }
                             <img 
                                 src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} 
                                 alt={itemInfo.name} 
-                                className='w-full h-full object-contain rounded-md'
+                                className='w-full h-full object-contain'
                                 loading="lazy"
                             />
                         )}
@@ -174,7 +174,7 @@ export default function RecentMatch() {
     return (
         <div className="max-w-3xl">
             <div className="flex flex-col md:flex-row gap-4 items-center">
-                <div className="w-32 h-32 md:w-28 md:h-28 overflow-hidden rounded-lg shadow-md flex-shrink-0">
+                <div className="w-28 h-28 md:w-28 md:h-28 rounded-md bg-card text-card-foreground shadow-sm aspect-square flex items-center justify-center flex-shrink-0">
                     {heroInfo && (
                         <img 
                             src={`https://cdn.cloudflare.steamstatic.com/${heroInfo.img}`} 
@@ -207,12 +207,12 @@ export default function RecentMatch() {
                 {items.map((itemId: number, index: number) => {
                     const itemInfo = itemNameMap.get(itemId);
                     return (
-                        <div key={index} className="rounded-md border bg-card text-card-foreground shadow-sm aspect-square flex items-center justify-center w-10 h-10">
+                        <div key={index} className="rounded-md bg-card text-card-foreground shadow-sm aspect-square flex items-center justify-center w-10 h-10">
                             {itemInfo && (
                                 <img 
                                     src={`https://cdn.cloudflare.steamstatic.com/${itemInfo.img}`} 
                                     alt={itemInfo.name} 
-                                    className='w-9 h-9 object-contain rounded-sm'
+                                    className='w-full h-full object-contain'
                                     loading="lazy"
                                 />
                             )}
