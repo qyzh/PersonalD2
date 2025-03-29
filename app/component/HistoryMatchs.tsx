@@ -99,7 +99,7 @@ export default function HistoryMatch() {
                     return (
                         <Link
                             key={match.match_id}
-                            href={`/matches/${match.match_id}`}
+                            href={`/history/${match.match_id}`}
                             className="flex items-center justify-between p-3 rounded-lg border bg-card/50 hover:bg-card/80 transition-colors
                             hover:cursor-pointer
                             hover:border-primary">
