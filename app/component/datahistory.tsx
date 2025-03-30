@@ -11,6 +11,7 @@ import {
   } from "@/app/component/ui/Table"
 import { Trophy, ShieldBan, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getHistoryMatchs } from "@/app/data/game/historymatch";
+import Link from "next/link";
 interface Match {
     match_id: number;
     kills: number;
@@ -181,7 +182,7 @@ export default function DataHistory() {
                                     <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.kills}</TableCell>
                                     <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.deaths}</TableCell>
                                     <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.assists}</TableCell>
-                                    <TableCell className="text-right text-xs sm:text-sm">{match.match_id}</TableCell>
+                                    <TableCell className="text-right text-xs sm:text-sm"><Link href={`/history/${match.match_id}`}>{match.match_id}</Link></TableCell>
                                 </TableRow>
                             );
                         })}
