@@ -40,6 +40,13 @@ interface Player {
   hero_damage: number
   tower_damage: number
   hero_healing: number
+  ability_upgrades_arr?: {
+    ability: number;
+    time: number;
+    level: number;
+    ability_name: string;
+    ability_description?: string;
+  }[];
 }
 
 // First, update the interface to include bans
@@ -108,6 +115,29 @@ async function getMatchData(matchId: string) {
     }
 
     const matchData = await response.json()
+
+    // Fetch ability data for each hero
+    const abilityPromises = matchData.players.map(async (player: Player) => {
+      if (!player.ability_upgrades_arr) return;
+      
+      const heroAbilities = await fetch(`https://api.opendota.com/api/heroes/${player.hero_id}/abilities`, {
+        next: { revalidate: 3600 }
+      }).then(res => res.json()).catch(() => null);
+      
+      if (heroAbilities && typeof heroAbilities === 'object') {
+        // The API returns an object with ability names as keys
+        Object.entries(heroAbilities).forEach(([abilityName, abilityData]: [string, any]) => {
+          player.ability_upgrades_arr?.forEach(upgrade => {
+            if (upgrade.ability_name === abilityName) {
+              upgrade.ability_description = abilityData.desc || '';
+            }
+          });
+        });
+      }
+    });
+
+    await Promise.all(abilityPromises);
+
     return { matchData, itemNameMap, heroNameMap }
   } catch (error) {
     console.error('Error fetching match data:', error)
@@ -448,18 +478,33 @@ export default async function MatchDetailPage({ params }: { params: { id: string
                 <div className='bg-card border border-border p-4 rounded-lg'>
                     <div className='grid grid-cols-1 gap-2'>
                         <div>
-                            {matchData.picks_bans?.map((pb: { hero_id: number, team: number, is_pick: boolean, order: number }) => {
-                                const hero = heroNameMap.get(pb.hero_id)
+                            {(() => {
+                                const picks = matchData.picks_bans?.filter((pb: { hero_id: number, team: number, is_pick: boolean, order: number }) => pb.is_pick) || []
+                                const groupedPicks = []
+                                for (let i = 0; i < picks.length; i += 2) {
+                                    groupedPicks.push(picks.slice(i, i + 2))
+                                }
                                 return (
-                                    <div key={pb.hero_id} className={`${pb.is_pick ? 'text-red-500' : 'text-green-500'}`}>
-                                        {hero?.name || `Unknown (${pb.hero_id})`} {' '}
-                                        <span className={pb.team === 0 ? 'text-green-500' : 'text-red-500'}>
-                                            {pb.team === 0 ? 'Radiant' : 'Dire'}
-                                        </span>
-                                        {' '}{pb.is_pick ? 'Pick' : 'Ban'} {pb.order}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                        {groupedPicks.map((group, groupIndex) => (
+                                            <div key={groupIndex} className="grid grid-cols-2 gap-2 p-2 bg-muted/50 rounded">
+                                                <div className="text-xs text-muted-foreground col-span-2">Phase {groupIndex + 1}</div>
+                                                {group.map((pb: { hero_id: number, team: number, is_pick: boolean, order: number }) => {
+                                                    const hero = heroNameMap.get(pb.hero_id)
+                                                    return (
+                                                        <div key={pb.hero_id} className="text-sm truncate">
+                                                            {hero?.name || `Unknown (${pb.hero_id})`} {' '}
+                                                            <span className={pb.team === 0 ? 'text-green-500' : 'text-red-500'}>
+                                                                {pb.team === 0 ? 'Radiant' : 'Dire'}
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        ))}
                                     </div>
                                 )
-                            })}
+                            })()}
                         </div>
                         <div>
 
@@ -469,6 +514,65 @@ export default async function MatchDetailPage({ params }: { params: { id: string
               </div>
 
               {/* Bans section */}
+            </div>
+            {/* Per-player stats */}
+            <div className="rounded-lg bg-card p-4">
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Per-Player Stats</h2>
+              <div className="grid grid-cols-1 gap-4">
+                {radiant.map((player, index) => (
+                  <div key={index} className="bg-muted/50 p-3 sm:p-4 rounded-lg">
+                    {/* Player Info - Hero and Name */}
+                    <div className="flex items-center gap-2 mb-3">
+                      {heroNameMap.get(player.hero_id) && (
+                        <img 
+                          src={`https://cdn.cloudflare.steamstatic.com/${heroNameMap.get(player.hero_id)?.img}`}
+                          alt={heroNameMap.get(player.hero_id)?.name}
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded object-cover"
+                          loading="lazy"
+                        />
+                      )}
+                      <div>
+                        <h3 className="text-sm font-medium">{player.personaname || 'Anonymous'}</h3>
+                        <p className="text-xs text-muted-foreground">
+                          {heroNameMap.get(player.hero_id)?.name || `Unknown (${player.hero_id})`}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Skill Build */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground">Skill Build</div>
+                      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1">
+                        {player.ability_upgrades_arr && player.ability_upgrades_arr.length > 0 ? (
+                          player.ability_upgrades_arr.map((upgrade, idx) => (
+                            <div key={idx} className="flex flex-col items-center group relative">
+                              <div className="text-xs text-muted-foreground">{upgrade.level}</div>
+                              <div className="w-6 h-6 rounded bg-black/50 flex items-center justify-center">
+                                <img 
+                                  src={`https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/${upgrade.ability_name}.png`}
+                                  alt={`Ability ${upgrade.ability_name}`}
+                                  className="w-full h-full object-contain"
+                                  loading="lazy"
+                                />
+                              </div>
+                              {upgrade.ability_description && (
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-card p-2 rounded shadow-lg z-10 w-64">
+                                  <div className="text-xs font-medium">{upgrade.ability_name.replace(/_/g, ' ')}</div>
+                                  <div className="text-xs text-muted-foreground mt-1">{upgrade.ability_description}</div>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="col-span-full text-center text-sm text-muted-foreground">
+                            No skill build data available
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
