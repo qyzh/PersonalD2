@@ -21,7 +21,7 @@ import FBbesthero from './suspend/FBbesthero';
 import Footer from './component/footer';
 import { getProfileUserName } from './profile/profiledata';
 import { ErrorBoundary } from './component/ErrorBoundary';
-import { Icon } from './public/svg/icon';
+import { Icon } from '../public/svg/icon';
 
 interface DashboardCardProps {
     title: string;

@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { getHistoryMatchs } from "@/app/data/game/historymatch";
-import { Icon } from '../public/svg/icon';
+import { Icon } from '../../public/svg/icon';
 
 interface Match {
     match_id: number;

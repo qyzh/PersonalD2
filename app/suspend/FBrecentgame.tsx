@@ -1,5 +1,5 @@
 import { Skull, Sword, Handshake } from 'lucide-react'
-import { Icon } from '../public/svg/icon'
+import { Icon } from '../../public/svg/icon'
 
 // Reusable loading card component to reduce repetition
 function LoadingCard() {

@@ -10,7 +10,7 @@ import {
   } from "@/app/component/ui/Table"
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getHistoryMatchs } from "@/app/data/game/historymatch";
-import { Icon } from '../public/svg/icon';
+import { Icon } from '../../public/svg/icon';
 interface Match {
     match_id: number;
     kills: number;

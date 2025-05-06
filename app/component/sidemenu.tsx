@@ -2,7 +2,7 @@
 import { SidebarLink } from "./sidebarlink";
 import Link from "next/link";
 import { getProfileData } from "@/app/profile/profiledata";
-import { Icon } from "../public/svg/icon";
+import { Icon } from "../../public/svg/icon";
 
 const Data = await getProfileData();
 

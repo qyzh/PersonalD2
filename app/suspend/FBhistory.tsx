@@ -1,5 +1,5 @@
 "use client";
-import { Icon } from "../public/svg/icon";
+import { Icon } from "../../public/svg/icon";
 
 export default function FBhistorygame() {
     const placeholderCount = 5
