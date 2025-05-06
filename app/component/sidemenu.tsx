@@ -1,8 +1,8 @@
 "user client";
-import { User, ScrollText, Sword } from "lucide-react";
 import { SidebarLink } from "./sidebarlink";
 import Link from "next/link";
 import { getProfileData } from "@/app/profile/profiledata";
+import { Icon } from "../public/svg/icon";
 
 const Data = await getProfileData();
 
@@ -13,14 +13,15 @@ export function NavSide() {
           label: "History",
           href: "/history",
           icon: (
-            <ScrollText  className="text-neutral-700 hover:text-neutral-200 h-5 w-5 flex-shrink-0" />
+           <Icon name="calender" size={20} className="h-5 w-5 flex-shrink-0 fill-neutral-700 hover:fill-neutral-200" />
           ),
         },
         {
             label: "Item",
             href: "/items",
             icon: (
-              <Sword  className="text-neutral-700 hover:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                <Icon name="sword" size={20} className="h-5 w-5 flex-shrink-0 fill-neutral-700 hover:fill-neutral-200" />
+
             ),
           },
       ];

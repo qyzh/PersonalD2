@@ -1,11 +1,8 @@
-// import React, { Suspense } from "react";
+
 import Breadcrumb from "../component/breadcrumb";
 import { NavSide } from "../component/sidemenu";
-// import DataHistory from "../component/datahistory";
 import SHeader from "../component/sheader";
- import FBdatamatch from "../suspend/FBdatamatch";
 import Footer from "../component/footer";
-// import { DataChart } from "../data/DrankChart";
 import DataHistory from "../component/datahistory";
 
 

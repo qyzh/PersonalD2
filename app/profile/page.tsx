@@ -7,10 +7,9 @@ import { Badge } from '../component/ui/Badge';
 import { Separator } from '../component/ui/Separator';
 import { Globe, User, Calendar, Shield, Link as LinkIcon, Clock, Trophy, GamepadIcon, History } from 'lucide-react';
 import { fetchWinrate } from '../data/game/winrate';
-import { getHistoryMatchs } from '../data/game/historymatch';
 const Data = await getProfileData();
 const datamatches = await fetchWinrate();
-const matches = await getHistoryMatchs();
+
 export default function Profile() {
     return (
         <div className="flex h-screen">
@@ -89,7 +88,7 @@ export default function Profile() {
                                         <LinkIcon className="w-4 h-4" />
                                         <span>Profile URL</span>
                                     </div>
-                                    <a 
+                                    <a
                                         href={Data.profile.profileurl}
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -114,11 +113,11 @@ export default function Profile() {
                                             <Trophy className="w-4 h-4" />
                                             <span>Current Rank</span>
                                         </div>
-                                        <p className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
                                             <div className="relative flex items-center justify-center w-12 h-12">
-                                                <img 
-                                                    src={`https://www.opendota.com/assets/images/dota2/rank_icons/rank_icon_${Math.floor(Data.rank_tier / 10)}.png`} 
-                                                    alt="Rank" 
+                                                <img
+                                                    src={`https://www.opendota.com/assets/images/dota2/rank_icons/rank_icon_${Math.floor(Data.rank_tier / 10)}.png`}
+                                                    alt="Rank"
                                                     className="w-8 h-8"
                                                 />
                                                 <div className="absolute top-0 left-0 right-0 flex justify-center">
@@ -127,7 +126,7 @@ export default function Profile() {
                                                     ))}
                                                 </div>
                                             </div>
-                                        </p>
+                                        </div>
                                     </div>
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">

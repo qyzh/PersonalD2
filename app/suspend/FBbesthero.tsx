@@ -1,7 +1,7 @@
 export default function FBbesthero() {
-    // Create an array to represent the number of placeholder items
+
     const placeholderCount = 6
-    
+
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 place-items-center mt-4">
             {Array.from({ length: placeholderCount }).map((_, index) => (

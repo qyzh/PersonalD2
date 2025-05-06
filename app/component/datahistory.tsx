@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
   } from "@/app/component/ui/Table"
-import { Trophy, ShieldBan, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getHistoryMatchs } from "@/app/data/game/historymatch";
+import { Icon } from '../public/svg/icon';
 interface Match {
     match_id: number;
     kills: number;
@@ -55,7 +55,7 @@ export default function DataHistory() {
         setIsLoading(true);
         try {
             const response = await getHistoryMatchs(page, matchesPerPage);
-            const { matches: pageMatches, total } = await response;
+            const { matches: pageMatches, total } = response;
             setMatches(pageMatches);
             setTotalMatches(total);
         } catch (error) {
@@ -151,7 +151,6 @@ export default function DataHistory() {
                             const isRadiant = match.player_slot < 127;
                             const didWin = (isRadiant && match.radiant_win) || (!isRadiant && !match.radiant_win);
                             const heroInfo = heroNameMap.get(match.hero_id);
-                            const Game_Mode = gameModeMap.get(match.game_mode);
                             return (
                                 <TableRow key={match.match_id} className={``}>
                                     <TableCell className="min-w-[140px] sm:min-w-[200px] lg:min-w-[250px]">
@@ -173,9 +172,9 @@ export default function DataHistory() {
                                     </TableCell>
                                     <TableCell className="w-[40px] sm:w-[80px]">{
                                         didWin ?
-                                        <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-emerald-500" />
+                                        <Icon name="win" size={20} className="h-5 w-5 flex-shrink-0 fill-green-500 hover:fill-green-800" />
                                         :
-                                         <ShieldBan className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-500" />
+                                        <Icon name="lose" size={20} className="h-5 w-5 flex-shrink-0 fill-red-500 hover:fill-red-800" />
                                         }
                                     </TableCell>
                                     <TableCell className="w-[40px] sm:w-[60px] text-xs sm:text-sm">{match.kills}</TableCell>
@@ -188,7 +187,7 @@ export default function DataHistory() {
                     </TableBody>
                 </Table>
             </div>
-            
+
             {/* Pagination Controls */}
             <div className="flex items-center justify-between">
                 <div className="text-xs sm:text-sm text-zinc-500">
