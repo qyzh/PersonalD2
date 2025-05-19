@@ -195,7 +195,7 @@ const ChartTooltipContent = React.forwardRef<
                 )}
               >
                 {formatter && item?.value !== undefined && item?.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                  formatter(item?.value, item?.name, item, index, item?.payload)
                 ) : (
                   <>
                     {itemConfig?.icon ? (
@@ -231,10 +231,10 @@ const ChartTooltipContent = React.forwardRef<
                       <div className="grid gap-1.5">
                         {nestLabel ? tooltipLabel : null}
                         <span className="text-muted-foreground">
-                          {itemConfig?.label || item.name}
+                          {itemConfig?.label || item?.name}
                         </span>
                       </div>
-                      {item.value && (
+                      {item?.value && (
                         <span className="font-mono font-medium tabular-nums text-foreground">
                           {item.value.toLocaleString()}
                         </span>
