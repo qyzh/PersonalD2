@@ -8,6 +8,7 @@ export interface DataMatch {
     picks_bans?: {
         is_pick: boolean;
         order: number;
+    }[];
   players?: Player[];
 }
 

@@ -1,16 +1,20 @@
 import React from 'react';
 import Icon from "@/public/svg/icon";
 
+
 interface MatchSummaryProps {
   matchId: string;
   duration: number;
   radiantWin: boolean;
   radiantScore: number;
   direScore: number;
-  playerCount?: number;
-  picks_bans: any[];
+  picks_bans?: PickBan[];
 }
-
+type PickBan = {
+  hero_id: number;
+  team: number;
+  is_pick: boolean;
+};
 const MatchSummary: React.FC<MatchSummaryProps> = ({
   matchId,
   duration,
@@ -37,8 +41,7 @@ const MatchSummary: React.FC<MatchSummaryProps> = ({
           )}
         </p>
         <p>Score: {radiantScore} - {direScore}</p>
-        <p>{picks_bans}</p>
-      </div>
+              </div>
     </div>
   );
 };

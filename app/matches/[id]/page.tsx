@@ -41,7 +41,8 @@ export default function MatchDetailsPage() {
             radiantWin={data.radiant_win}
             radiantScore={data.radiant_score}
             direScore={data.dire_score}
-          />
+
+                     />
 
           <div className="mt-4">
             <h3 className="text-lg font-semibold text-white mb-2">Players</h3>
@@ -70,14 +71,14 @@ export default function MatchDetailsPage() {
 
           {/* Drafting */}
 <DraftSection
-  picks_bans={Array.isArray(data.picks_bans)
+  picks_bans={data && Array.isArray(data.picks_bans)
     ? data.picks_bans.filter(
         (pb): pb is { order: number; hero_id: number; is_pick: boolean; team: number } =>
           pb &&
           typeof pb.order === 'number' &&
-          typeof pb.hero_id === 'number' &&
+          'hero_id' in pb && typeof pb.hero_id === 'number' &&
           typeof pb.is_pick === 'boolean' &&
-          typeof pb.team === 'number'
+          'team' in pb && typeof pb.team === 'number'
       )
     : []
   }
