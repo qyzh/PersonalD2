@@ -1,6 +1,5 @@
 "use client";
 import React, { useMemo } from 'react';
-import { Sword, Skull, Handshake } from 'lucide-react';
 import dataitem from '../data/item/item_ID.json';
 import itemDetails from '../data/item/itemDetail.json';
 import { getHistoryMatchs } from '../data/game/historymatch';
