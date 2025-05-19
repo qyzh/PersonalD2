@@ -43,9 +43,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   const playerBackpack = getPlayerBackpack(player);
 
   return (
-    <div
+    <button
       className="flex flex-col bg-black/50 p-2 rounded-lg mb-2 cursor-pointer hover:bg-black/80 transition-colors"
       onClick={() => togglePlayerExpand(player.account_id)}
+      type="button"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center">
