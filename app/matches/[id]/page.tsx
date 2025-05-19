@@ -71,7 +71,7 @@ export default function MatchDetailsPage() {
 
           {/* Drafting */}
 <DraftSection
-  picks_bans={data && Array.isArray(data.picks_bans)
+  picks_bans={Array.isArray(data.picks_bans)
     ? data.picks_bans.filter(
         (pb): pb is { order: number; hero_id: number; is_pick: boolean; team: number } =>
           pb &&
