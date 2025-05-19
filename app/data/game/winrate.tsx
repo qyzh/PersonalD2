@@ -11,7 +11,7 @@ function wrapPromise<T>(promise: Promise<T>) {
     let status = 'pending';
     let result: T;
     let error: Error;
-    
+
     const suspender = promise.then(
         (r) => {
             status = 'success';
@@ -35,9 +35,6 @@ function wrapPromise<T>(promise: Promise<T>) {
         }
     };
 }
-
-// Add API key to your requests
-const API_KEY = process.env.NEXT_PUBLIC_OPENDOTA_API_KEY;
 
 export function fetchWinrate() {
     const promise = getProfileID()

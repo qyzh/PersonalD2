@@ -71,7 +71,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 </div>
         </div>
         <Icon
-          name={expandedPlayerId === player.account_id === player.hero_id ? 'chevronUp' : 'chevronDown'}
+         name={(expandedPlayerId === player.account_id || expandedPlayerId === player.hero_id) ? 'chevronUp' : 'chevronDown'}
           className="w-5 h-5 text-gray-300 fill-current"
         />
       </div>

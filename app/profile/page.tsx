@@ -8,7 +8,7 @@ import { Separator } from '../component/ui/Separator';
 import { Globe, User, Calendar, Shield, Link as LinkIcon, Clock, Trophy, GamepadIcon, History } from 'lucide-react';
 import { fetchWinrate } from '../data/game/winrate';
 const Data = await getProfileData();
-const datamatches = await fetchWinrate();
+const datamatches = fetchWinrate();
 
 export default function Profile() {
     return (
